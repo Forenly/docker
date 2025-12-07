@@ -32,9 +32,9 @@ jobs:
         id: auth
         uses: google-github-actions/auth@v2
         with:
-          # TODO: REPLACE WITH YOUR WIF PROVIDER
-          workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
-          service_account: 'my-service-account@modern-alpha-479108-b6.iam.gserviceaccount.com'
+          # Authenticate to Google Cloud using Workload Identity Federation
+          workload_identity_provider: 'projects/587885930948/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'github-actions-sa@modern-alpha-479108-b6.iam.gserviceaccount.com'
           # If using JSON key instead (less secure):
           # credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
