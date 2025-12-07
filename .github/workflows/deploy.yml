@@ -3,7 +3,6 @@ name: Deploy Nextcloud to Cloud Run
 on:
   push:
     branches:
-    branches:
       - master
   workflow_dispatch:
 
