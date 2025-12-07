@@ -1,0 +1,55 @@
+name: Deploy Nextcloud to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: modern-alpha-479108-b6
+  REGION: us-central1
+  SERVICE_NAME: nextcloud
+  REPO_NAME: nextcloud-repo
+  # Adjust the path if you want to build a different version
+  CONTEXT_DIR: ./32/apache
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Authenticate to Google Cloud using Workload Identity Federation
+      # Replace WIF_PROVIDER and WIF_SERVICE_ACCOUNT with your actual values
+      # You can also use a JSON key (not recommended) stored in secrets.GCP_CREDENTIALS
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          # TODO: REPLACE WITH YOUR WIF PROVIDER
+          workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+          service_account: 'my-service-account@modern-alpha-479108-b6.iam.gserviceaccount.com'
+          # If using JSON key instead (less secure):
+          # credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Submit Build to Cloud Build
+        run: |
+          gcloud builds submit ${{ env.CONTEXT_DIR }} \
+            --tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          region: ${{ env.REGION }}
+          image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+          flags: '--port=80 --allow-unauthenticated --memory=1Gi --cpu=1'

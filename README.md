@@ -1,3 +1,9 @@
+# Nextcloud on Google Cloud Run
+
+**[🚀 Deployment Guide for Google Cloud Run](./GCP_SETUP.md)** - Read this first to set up your CI/CD pipeline.
+
+---
+
 ![GitHub last commit](https://img.shields.io/github/last-commit/nextcloud/docker)
 [![GitHub Release](https://img.shields.io/github/v/release/nextcloud/docker?link=https%3A%2F%2Fgithub.com%2Fnextcloud%2Fdocker%2Freleases%2Flatest&label=latest%20Image)](https://github.com/nextcloud/docker/releases/)
 [![Docker Image Version](https://img.shields.io/docker/v/library/nextcloud?sort=semver&logo=nextcloud&label=Nextcloud)](https://nextcloud.com/changelog/)
@@ -134,7 +140,13 @@ Overview of the folders that can be mounted as volumes:
 - `/var/www/html` Main folder, needed for updating
 - `/var/www/html/custom_apps` installed / modified apps
 - `/var/www/html/config` local configuration
-- `/var/www/html/data` the actual data of your Nextcloud
+- `/var/www/html/data` the actual data of your# Nextcloud on Google Cloud Run
+
+**[🚀 Deployment Guide for Google Cloud Run](./GCP_SETUP.md)** - Read this first to set up your CI/CD pipeline.
+
+---
+
+# Nextcloud
 - `/var/www/html/themes/<YOUR_CUSTOM_THEME>` theming/branding
 
 If you want to use named volumes for all of these, it would look like this:
