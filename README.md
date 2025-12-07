@@ -499,8 +499,32 @@ volumes:
 
 Then run `docker compose up -d`, now you can access Nextcloud at http://localhost:8080/ from your host system.
 
-## Base version - FPM
-When using the FPM image, you need another container that acts as web server on port 80 and proxies the requests to the Nextcloud container. In this example a simple nginx container is combined with the Nextcloud-fpm image and a MariaDB database container. The data is stored in docker volumes. The nginx container also needs access to static files from your Nextcloud installation. It gets access to all the volumes mounted to Nextcloud via the `volumes` option. The configuration for nginx is stored in the configuration file `nginx.conf`, that is mounted into the container. An example can be found in the examples section [here](https://github.com/nextcloud/docker/tree/master/.examples).
+## 🔄 CI/CD Workflow & Customization
+
+This repository is configured with a **Continuous Deployment** pipeline. Any change pushed to the `master` branch will automatically trigger a new build and deployment to Cloud Run.
+
+### How to customize?
+1.  **Configuration (Memory, Upload Limits):**
+    *   Edit `.github/workflows/deploy.yml` to change `env_vars` (e.g., `PHP_MEMORY_LIMIT`).
+    *   Commit and push. Cloud Run will be updated with new settings.
+    
+2.  **Installing Apps/Plugins:**
+    *   To make apps persistent without external storage, you must "bake" them into the image.
+    *   Edit `32/apache/Dockerfile`.
+    *   Add commands to download and extract apps into `/var/www/html/custom_apps/`.
+    *   Example:
+        ```dockerfile
+        RUN curl -L -o /tmp/app.tar.gz https://github.com/developer/app/releases/download/v1.0/app.tar.gz \
+            && tar -xzf /tmp/app.tar.gz -C /usr/src/nextcloud/custom_apps/
+        ```
+    *   **Note:** We use `/usr/src/nextcloud/custom_apps/` because `entrypoint.sh` copies from there to the actual volume on startup.
+
+3.  **System Packages:**
+    *   Edit `32/apache/Dockerfile` and add packages to the `apt-get install` section.
+
+## 🚀 Deployment Status
+- **Master Branch:** Deploys to `nextcloud` service on Cloud Run (us-central1).
+- **Trigger:** Push to `master`. An example can be found in the examples section [here](https://github.com/nextcloud/docker/tree/master/.examples).
 
 This setup provides **no TLS encryption** and is intended to run behind a reverse proxy.
 
