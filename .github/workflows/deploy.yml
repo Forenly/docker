@@ -44,6 +44,7 @@ jobs:
       - name: Submit Build to Cloud Build
         run: |
           gcloud builds submit ${{ env.CONTEXT_DIR }} \
+            --gcs-log-dir="gs://${{ env.PROJECT_ID }}-build-logs/logs" \
             --tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
 
       - name: Deploy to Cloud Run
